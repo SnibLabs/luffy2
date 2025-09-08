@@ -248,7 +248,7 @@ function renderStoryClue1(ctx, x, y, pulse=1) {
     // --- END MOD ---
     ctx.save();
     ctx.translate(x, y);
-    ctx.scale(0.55 * pulse, 0.55 * pulse);
+    ctx.scale(0.55 * 1.5 * pulse, 0.55 * 1.5 * pulse); // 50% larger
     // Glow
     ctx.save();
     ctx.globalAlpha = 0.22 + 0.09 * Math.sin(performance.now()/600);
@@ -305,7 +305,7 @@ function renderStoryClue2(ctx, x, y, pulse=1) {
     // Scrap of Fabric
     ctx.save();
     ctx.translate(x, y);
-    ctx.scale(0.53 * pulse, 0.53 * pulse);
+    ctx.scale(0.53 * 1.5 * pulse, 0.53 * 1.5 * pulse); // 50% larger
     // Glow
     ctx.save();
     ctx.globalAlpha = 0.20 + 0.09 * Math.sin(performance.now()/700);
@@ -347,7 +347,7 @@ function renderStoryClue3(ctx, x, y, pulse=1) {
     // Old Key
     ctx.save();
     ctx.translate(x, y);
-    ctx.scale(0.54 * pulse, 0.54 * pulse);
+    ctx.scale(0.54 * 1.5 * pulse, 0.54 * 1.5 * pulse); // 50% larger
     // Glow
     ctx.save();
     ctx.globalAlpha = 0.21 + 0.09 * Math.sin(performance.now()/800);
