@@ -104,8 +104,31 @@ const LevelMaps = [
             }
             // --- END: 3 clues for story in LEVEL_2, MOVED TO MARKED GRID LOCATIONS ---
         ]
-    }
+    },
     // --- END: LEVEL_2 Map ---
+    // --- BEGIN: LEVEL_3 to LEVEL_5 dummy maps for world map fast travel ---
+    {
+        key: "LEVEL_3",
+        name: "Forest Edge",
+        bg: "forest",
+        playerStart: { x: 180, y: 400 },
+        hotspots: []
+    },
+    {
+        key: "LEVEL_4",
+        name: "Village Inn",
+        bg: "inn",
+        playerStart: { x: 700, y: 380 },
+        hotspots: []
+    },
+    {
+        key: "LEVEL_5",
+        name: "Grand Library",
+        bg: "library",
+        playerStart: { x: 450, y: 300 },
+        hotspots: []
+    }
+    // --- END: LEVEL_3 to LEVEL_5 dummy maps ---
 ];
 
 // MapData mapping
@@ -155,6 +178,9 @@ const Puzzles = [
 // --- SCENE TYPE ENUM EXTENSION ---
 window.SceneType.LEVEL_1 = "LEVEL_1";
 window.SceneType.LEVEL_2 = "LEVEL_2";
+window.SceneType.LEVEL_3 = "LEVEL_3";
+window.SceneType.LEVEL_4 = "LEVEL_4";
+window.SceneType.LEVEL_5 = "LEVEL_5";
 // Remove other LEVEL_2+ enums for now
 
 // --- EXPORT ---
