@@ -57,6 +57,13 @@ class InputSystem {
             }
         }
         // --- END: Collision grid clear toggle ---
+        // --- BEGIN: World Map Keybind ---
+        if (e.code === 'KeyM') {
+            if (typeof this.game.toggleWorldMap === "function") {
+                this.game.toggleWorldMap();
+            }
+        }
+        // --- END: World Map Keybind ---
     }
     onKeyUp(e) {
         this.keyState[e.code] = false;
