@@ -80,6 +80,13 @@ class Player {
 
         // --- FIX: Remove any movement limit ---
         // (no movement counter or limit is set)
+
+        // --- BEGIN: Idle facing player image ---
+        this.idleFacingPlayerImg = new window.Image();
+        this.idleFacingPlayerLoaded = false;
+        this.idleFacingPlayerImg.src = "https://dcnmwoxzefwqmvvkpqap.supabase.co/storage/v1/object/public/sprite-studio-exports/6f1edf47-be71-4c38-9203-26202e227b0a/library/sif_idle_1757300204691.png";
+        this.idleFacingPlayerImg.onload = () => { this.idleFacingPlayerLoaded = true; };
+        // --- END: Idle facing player image ---
     }
 
     setTarget(x, y) {
@@ -203,73 +210,89 @@ class Player {
         let allLoaded = this._getCurrentAnimLoaded().every(v => v);
         const images = this._getCurrentAnimImages();
         let img = null;
-        if (allLoaded) {
-            img = this.isMoving
-                ? images[this.walkFrameIdx]
-                : images[0];
-        }
-        // Defensive: Ensure img is a valid image and is fully loaded
-        if (img && img instanceof window.Image && img.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
-            ctx.save();
-            ctx.translate(this.x, this.y);
-            // Center the sprite
-            // Assume sprite is 64x64, scale to player size
-            const drawW = 64, drawH = 64;
-            // --- MODIFICATION: Use dynamic scale ---
-            // Also apply 2/3 scaling to baseScale
-            const baseScale = ((this.radius * 2) / drawW); // radius already has 2/3 applied
-            ctx.scale(baseScale * scaleY, baseScale * scaleY);
-            ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
-            ctx.restore();
+
+        if (this.isMoving) {
+            // Moving: use walking animation as before
+            if (allLoaded) {
+                img = images[this.walkFrameIdx];
+            }
+            // Defensive: Ensure img is a valid image and is fully loaded
+            if (img && img instanceof window.Image && img.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                // Center the sprite
+                // Assume sprite is 64x64, scale to player size
+                const drawW = 64, drawH = 64;
+                // --- MODIFICATION: Use dynamic scale ---
+                // Also apply 2/3 scaling to baseScale
+                const baseScale = ((this.radius * 2) / drawW); // radius already has 2/3 applied
+                ctx.scale(baseScale * scaleY, baseScale * scaleY);
+                ctx.drawImage(img, -drawW / 2, -drawH / 2, drawW, drawH);
+                ctx.restore();
+                return;
+            }
         } else {
-            // Fallback: original cat explorer drawing
-            ctx.save();
-            ctx.translate(this.x, this.y);
-            // --- MODIFICATION: Use dynamic scale for fallback drawing ---
-            // Also apply 2/3 scaling to fallback drawing (radius already has it)
-            ctx.scale(scaleY, scaleY);
-            // Body
-            const grad = ctx.createRadialGradient(0, 0, 6 * 4, 0, 0, this.radius);
-            grad.addColorStop(0, '#fff8dc');
-            grad.addColorStop(1, '#e8b264');
-            ctx.beginPath();
-            ctx.arc(0, 0, this.radius, 0, 2 * Math.PI);
-            ctx.closePath();
-            ctx.shadowColor = "#e0a62d";
-            ctx.shadowBlur = 16 * 4;
-            ctx.fillStyle = grad;
-            ctx.fill();
-            ctx.shadowBlur = 0;
-            // Ears
-            ctx.beginPath();
-            ctx.moveTo(-12 * 4, -this.radius + 9 * 4);
-            ctx.lineTo(-2 * 4, -this.radius - 10 * 4);
-            ctx.lineTo(7 * 4, -this.radius + 9 * 4);
-            ctx.closePath();
-            ctx.fillStyle = "#e8b264";
-            ctx.fill();
-            // Face
-            ctx.beginPath();
-            ctx.arc(-8 * 4, -6 * 4, 4 * 4, 0, 2 * Math.PI);
-            ctx.arc(8 * 4, -6 * 4, 4 * 4, 0, 2 * Math.PI);
-            ctx.fillStyle = "#fff";
-            ctx.fill();
-            // Eyes
-            ctx.beginPath();
-            ctx.arc(-8 * 4, -6 * 4, 1.5 * 4, 0, 2 * Math.PI);
-            ctx.arc(8 * 4, -6 * 4, 1.5 * 4, 0, 2 * Math.PI);
-            ctx.fillStyle = "#111";
-            ctx.fill();
-            // Nose
-            ctx.beginPath();
-            ctx.moveTo(0, 2 * 4);
-            ctx.lineTo(-2 * 4, 6 * 4);
-            ctx.lineTo(2 * 4, 6 * 4);
-            ctx.closePath();
-            ctx.fillStyle = "#d27700";
-            ctx.fill();
-            ctx.restore();
+            // Idle: use the requested static image facing the player
+            if (this.idleFacingPlayerLoaded) {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                // Assume image is 64x64, scale to player size
+                const drawW = 64, drawH = 64;
+                const baseScale = ((this.radius * 2) / drawW); // radius already has 2/3 applied
+                ctx.scale(baseScale * scaleY, baseScale * scaleY);
+                ctx.drawImage(this.idleFacingPlayerImg, -drawW / 2, -drawH / 2, drawW, drawH);
+                ctx.restore();
+                return;
+            }
         }
+
+        // Fallback: original cat explorer drawing
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        // --- MODIFICATION: Use dynamic scale for fallback drawing ---
+        // Also apply 2/3 scaling to fallback drawing (radius already has it)
+        ctx.scale(scaleY, scaleY);
+        // Body
+        const grad = ctx.createRadialGradient(0, 0, 6 * 4, 0, 0, this.radius);
+        grad.addColorStop(0, '#fff8dc');
+        grad.addColorStop(1, '#e8b264');
+        ctx.beginPath();
+        ctx.arc(0, 0, this.radius, 0, 2 * Math.PI);
+        ctx.closePath();
+        ctx.shadowColor = "#e0a62d";
+        ctx.shadowBlur = 16 * 4;
+        ctx.fillStyle = grad;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        // Ears
+        ctx.beginPath();
+        ctx.moveTo(-12 * 4, -this.radius + 9 * 4);
+        ctx.lineTo(-2 * 4, -this.radius - 10 * 4);
+        ctx.lineTo(7 * 4, -this.radius + 9 * 4);
+        ctx.closePath();
+        ctx.fillStyle = "#e8b264";
+        ctx.fill();
+        // Face
+        ctx.beginPath();
+        ctx.arc(-8 * 4, -6 * 4, 4 * 4, 0, 2 * Math.PI);
+        ctx.arc(8 * 4, -6 * 4, 4 * 4, 0, 2 * Math.PI);
+        ctx.fillStyle = "#fff";
+        ctx.fill();
+        // Eyes
+        ctx.beginPath();
+        ctx.arc(-8 * 4, -6 * 4, 1.5 * 4, 0, 2 * Math.PI);
+        ctx.arc(8 * 4, -6 * 4, 1.5 * 4, 0, 2 * Math.PI);
+        ctx.fillStyle = "#111";
+        ctx.fill();
+        // Nose
+        ctx.beginPath();
+        ctx.moveTo(0, 2 * 4);
+        ctx.lineTo(-2 * 4, 6 * 4);
+        ctx.lineTo(2 * 4, 6 * 4);
+        ctx.closePath();
+        ctx.fillStyle = "#d27700";
+        ctx.fill();
+        ctx.restore();
     }
 }
 window.Player = Player;
